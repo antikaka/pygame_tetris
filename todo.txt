@@ -1,0 +1,10 @@
+
+To do:
+-Upcoming piece preview
+-Full line go poof
+-Points
+-Colors
+-Pause, start, end
+-Difficulty increasing
+
+convert pieces to sq's

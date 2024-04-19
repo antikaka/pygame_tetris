@@ -301,9 +301,16 @@ clock = pg.time.Clock()
 def_font = pg.font.get_default_font()
 font = pg.font.Font(def_font, 10)
 
+red = (255, 0, 0)
+blue = (0, 0, 255)
+green = (0, 255, 0)
+yellow = (255, 255, 0)
+magenta = (255, 0, 255)
+cyan = (0, 255, 255)
 
+colors = [red, blue, green, yellow, magenta, cyan]
 
-drawing = False
+random_color = random.choice(colors)
 
 
 started = False
@@ -331,6 +338,7 @@ random_shape = random.choice(shape_list)
 
 go_left = True
 go_right = True
+new_piece = False
 
 speed = 3
 pg.key.set_repeat(500, 50)
@@ -438,15 +446,23 @@ while True:
     elif count < 1:
         count = 4
 
-    if piece_count != len(piece_list):
+    if piece_count != len(piece_list) and new_piece:
+        random_color = random.choice(colors)
+
+    if piece_count != len(piece_list) and new_piece:
         print("piece_list+")
-        piece_list.append(piece_dict[piece_count])
+        for piece in piece_dict.values():
+            if piece[0][2] not in piece_list:
+                piece_list.append((piece[0][2], piece[1][2]))
+
+        new_piece = False
 
     if piece_y > 40:
         if (bottom.colliderect(t_rect1) or bottom.colliderect(t_rect2)):
             print("collide")
             piece_count += 1
-            piece_dict[piece_count] = (t_rect1, t_rect2)
+            new_piece = True
+            piece_dict[piece_count] = ((screen, random_color, t_rect1), (screen, random_color, t_rect2))
             random_shape = random.choice(shape_list)
             piece_x, piece_y = start_pos[0], start_pos[1]
             t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
@@ -459,7 +475,8 @@ while True:
         if bottom_act.colliderect(t_rect1) or bottom_act.colliderect(t_rect2):
             print("collide2")
             piece_count += 1
-            piece_dict[piece_count] = (t_rect1, t_rect2)
+            new_piece = True
+            piece_dict[piece_count] = ((screen, random_color, t_rect1), (screen, random_color, t_rect2))
             random_shape = random.choice(shape_list)
             piece_x, piece_y = start_pos[0], start_pos[1]
             t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
@@ -467,13 +484,14 @@ while True:
     t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
 
 
-    pg.draw.rect(screen, (0, 0, 0), t_rect1)
+
+    pg.draw.rect(screen, random_color, t_rect1)
     if t_rect2[2] > 1:
-        pg.draw.rect(screen, (0, 0, 0), t_rect2)
+        pg.draw.rect(screen, random_color, t_rect2)
 
     for piece in piece_dict.values():
-        pg.draw.rect(screen, (50, 50, 50), piece[0])
-        pg.draw.rect(screen, (50, 50, 50), piece[1])
+        pg.draw.rect(*piece[0])
+        pg.draw.rect(*piece[1])
 
     for sq in playfield_active:
         pg.draw.rect(screen, (255, 0, 0), sq, 1)
