@@ -6,5 +6,5 @@ To do:
 -Pause, start, end
 -Difficulty increasing
 
-convert pieces to sq's
+inserted pieces = bad
 

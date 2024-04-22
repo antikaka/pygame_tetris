@@ -5,11 +5,11 @@ import random
 
 
 def t_shape(count, x, y):
+    t_rect1 = pg.Rect(x, y, 60, 20)
+    t_rect2 = pg.Rect(x, y, 20, 20)
+
     match count:
         case 1:
-            t_rect1 = pg.Rect(x, y, 60, 20)
-            t_rect2 = pg.Rect(x, y, 20, 40)
-
             t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] - 20
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
@@ -22,10 +22,8 @@ def t_shape(count, x, y):
 
 
         case 2:
-            t_rect1 = pg.Rect(x, y, 60, 20)
-            t_rect2 = pg.Rect(x, y, 20, 40)
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0], t_rect1[1] - 40,  t_rect1[3], t_rect1[2]
-            t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0], t_rect2[1] - 20, t_rect2[3], t_rect2[2]
+            t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] + 20, t_rect2[1] - 20, t_rect2[3], t_rect2[2]
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
                 t_rect2[0] = 240
@@ -34,10 +32,9 @@ def t_shape(count, x, y):
                 t_rect1[0] = 520
                 t_rect2[0] = 520
             x_fix = 0
+
         case 3:
-            t_rect1 = pg.Rect(x, y, 60, 20)
-            t_rect2 = pg.Rect(x, y, 20, 40)
-            t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] - 20
+            t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1]
             t_rect1[1] = t_rect1[1] - 20
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
@@ -48,9 +45,8 @@ def t_shape(count, x, y):
                 t_rect2[0] = 520
 
             x_fix = 0
+
         case 4:
-            t_rect1 = pg.Rect(x, y, 60, 20)
-            t_rect2 = pg.Rect(x, y, 20, 40)
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0] + 40, t_rect1[1] - 40, t_rect1[3], t_rect1[2]
             t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] + 20, t_rect2[1] - 20, t_rect2[3], t_rect2[2]
             if t_rect2[0] < 240:
@@ -61,9 +57,8 @@ def t_shape(count, x, y):
                 t_rect1[0] = 540
                 t_rect2[0] = 520
             x_fix = -40
+
         case _:
-            t_rect1 = pg.Rect(x, y, 60, 20)
-            t_rect2 = pg.Rect(x, y, 20, 40)
             t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] - 20
             x_fix = 0
 
@@ -71,10 +66,10 @@ def t_shape(count, x, y):
     return t_rect1, t_rect2, x_fix
 
 def z_shape(count, x, y):
+    t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
+    t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
     match count:
         case 1:
-            t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
-            t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
             t_rect2[0], t_rect2[1] = t_rect1[0] - 20, t_rect1[1] - 20
             if t_rect2[0] < 240:
                 t_rect2[0] = 240
@@ -83,9 +78,8 @@ def z_shape(count, x, y):
                 t_rect1[0] = 540
                 t_rect2[0] = 520
             x_fix = -20
+
         case 2:
-            t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
-            t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0], t_rect1[1], t_rect1[3], t_rect1[2]
             t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] - 20, t_rect2[1] + 20, t_rect2[3], t_rect2[2]
             if t_rect2[0] < 240:
@@ -96,9 +90,8 @@ def z_shape(count, x, y):
                 t_rect1[0] = 520
                 t_rect2[0] = 500
             x_fix = -20
+
         case 3:
-            t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
-            t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
             t_rect2[0], t_rect2[1] = t_rect1[0] - 20, t_rect1[1] - 20
             if t_rect2[0] < 240:
                 t_rect2[0] = 240
@@ -107,9 +100,8 @@ def z_shape(count, x, y):
                 t_rect1[0] = 540
                 t_rect2[0] = 520
             x_fix = -20
+
         case 4:
-            t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
-            t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0], t_rect1[1], t_rect1[3], t_rect1[2]
             t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] - 20, t_rect2[1] + 20, t_rect2[3], t_rect2[2]
             if t_rect2[0] < 240:
@@ -120,17 +112,17 @@ def z_shape(count, x, y):
                 t_rect1[0] = 520
                 t_rect2[0] = 500
             x_fix = -20
+
         case _:
-            t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
-            t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
             t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] - 20
             x_fix = -20
     return t_rect1, t_rect2, x_fix
+
 def l_shape(count, x, y):
+    t_rect1 = pg.Rect(x + 20, y - 40, 20, 60)
+    t_rect2 = pg.Rect(x + 20, y - 40, 20, 20)
     match count:
         case 1:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 60)
-            t_rect2 = pg.Rect(x + 20, y - 40, 40, 20)
             t_rect2[0], t_rect2[1] = t_rect1[0] - 20, t_rect1[1]
             if t_rect2[0] < 240:
                 t_rect2[0] = 240
@@ -141,8 +133,6 @@ def l_shape(count, x, y):
             x_fix = -20
 
         case 2:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 60)
-            t_rect2 = pg.Rect(x + 20, y - 40, 40, 20)
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0] - 20, t_rect1[1] + 40, t_rect1[3], t_rect1[2]
             t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] + 20, t_rect2[1] + 20, t_rect2[3], t_rect2[2]
             if t_rect1[0] < 240:
@@ -152,11 +142,10 @@ def l_shape(count, x, y):
                 t_rect1[0] = 500
                 t_rect2[0] = 540
             x_fix = 0
+
         case 3:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 60)
-            t_rect2 = pg.Rect(x + 20, y - 40, 40, 20)
             t_rect1[0] = t_rect1[0] - 20
-            t_rect2[0], t_rect2[1] = t_rect1[0], t_rect1[1] + 40
+            t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] + 40
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
                 t_rect2[0] = 240
@@ -164,11 +153,10 @@ def l_shape(count, x, y):
                 t_rect2[0] = 520
                 t_rect1[0] = 520
             x_fix = 0
+
         case 4:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 60)
-            t_rect2 = pg.Rect(x + 20, y - 40, 40, 20)
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0] - 20, t_rect1[1] + 20, t_rect1[3], t_rect1[2]
-            t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] - 20, t_rect2[1] + 20, t_rect2[3], t_rect2[2]
+            t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] - 20, t_rect2[1] + 40, t_rect2[3], t_rect2[2]
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
                 t_rect2[0] = 240
@@ -176,85 +164,83 @@ def l_shape(count, x, y):
                 t_rect2[0] = 500
                 t_rect1[0] = 500
             x_fix = 0
+
         case _:
-            t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
-            t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
             t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] - 20
             x_fix = 0
     return t_rect1, t_rect2, x_fix
 
 def sq_shape(count, x, y):
+    t_rect1 = pg.Rect(x, y - 20, 40, 40)
     match count:
         case 1:
-            t_rect1 = pg.Rect(x, y - 20, 40, 40)
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
             if t_rect1[0] > 520:
                 t_rect1[0] = 520
             x_fix = 0
+
         case 2:
-            t_rect1 = pg.Rect(x, y - 20, 40, 40)
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
             if t_rect1[0] > 520:
                 t_rect1[0] = 520
             x_fix = 0
+
         case 3:
-            t_rect1 = pg.Rect(x, y - 20, 40, 40)
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
             if t_rect1[0] > 520:
                 t_rect1[0] = 520
             x_fix = 0
+
         case 4:
-            t_rect1 = pg.Rect(x, y - 20, 40, 40)
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
             if t_rect1[0] > 520:
                 t_rect1[0] = 520
             x_fix = 0
+
         case _:
-            t_rect1 = pg.Rect(x, y - 20, 40, 40)
             x_fix = 0
     t_rect2 = pg.Rect(0, 0, 0, 0)
     return t_rect1, t_rect2, x_fix
 
 
 def i_shape(count, x, y):
+    t_rect1 = pg.Rect(x + 20, y - 40, 20, 80)
     match count:
         case 1:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 80)
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
             if t_rect1[0] > 540:
                 t_rect1[0] = 540
             x_fix = -20
-        case 2:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 80)
-            t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0] - 20, t_rect1[1] + 20, t_rect1[3], t_rect1[2]
-            if t_rect1[0] < 240:
-                t_rect1[0] = 240
-            if t_rect1[0] > 480:
-                t_rect1[0] = 480
-            x_fix = 0
-        case 3:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 80)
 
-            if t_rect1[0] < 240:
-                t_rect1[0] = 240
-            if t_rect1[0] > 540:
-                t_rect1[0] = 540
-            x_fix = -20
-        case 4:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 80)
+        case 2:
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0] - 20, t_rect1[1] + 20, t_rect1[3], t_rect1[2]
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
             if t_rect1[0] > 480:
                 t_rect1[0] = 480
             x_fix = 0
+
+        case 3:
+            if t_rect1[0] < 240:
+                t_rect1[0] = 240
+            if t_rect1[0] > 540:
+                t_rect1[0] = 540
+            x_fix = -20
+
+        case 4:
+            t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0] - 20, t_rect1[1] + 20, t_rect1[3], t_rect1[2]
+            if t_rect1[0] < 240:
+                t_rect1[0] = 240
+            if t_rect1[0] > 480:
+                t_rect1[0] = 480
+            x_fix = 0
+
         case _:
-            t_rect1 = pg.Rect(x + 20, y - 40, 20, 80)
             x_fix = 0
     t_rect2 = pg.Rect(0, 0, 0, 0)
     return t_rect1, t_rect2, x_fix
@@ -341,6 +327,16 @@ new_piece = False
 speed = 3
 pg.key.set_repeat(500, 50)
 
+line_dict = {}
+line_y = 60
+line_count = 0
+
+for num in range(26):
+    line_count += 1
+    line = pg.Rect(240, line_y, 320, 20)
+    line_dict[line_count] = line
+    line_y += 20
+
 playfield_closed = []
 while True:
     clock.tick(speed)
@@ -352,6 +348,7 @@ while True:
 
     for num in range(29):
         r_x = r_x_orig
+
         for num in range(16):
             rect = pg.Rect(r_x, r_y, r_width, r_height)
             playfield_list.append(rect)
@@ -359,13 +356,14 @@ while True:
             r_x += 20
         r_y += 20
 
+    pg.draw.rect(screen, (255, 0, 0), (240, 60, 320, 2))  #end line
+
     pg.draw.rect(screen, (0, 0, 0), line1)
     pg.draw.rect(screen, (0, 0, 0), line2)
     pg.draw.rect(screen, (0, 0, 0), line3)
 
     start_button = pg.Rect(0, 10, 20, 20)
     pg.draw.rect(screen, (255, 0, 0), start_button)
-
 
 
     playfield_active = []
@@ -385,10 +383,10 @@ while True:
     if len(playfield_closed) > 1:
         obj_l, obj_r = left_right(t_rect1, t_rect2)
 
-        for sq in obj_l:
-            pg.draw.rect(screen, (255, 0, 0), sq, 1)
-        for sq in obj_r:
-            pg.draw.rect(screen, (255, 0, 0), sq, 1)
+        # for sq in obj_l:
+        #     pg.draw.rect(screen, (255, 0, 0), sq, 1)
+        # for sq in obj_r:
+        #     pg.draw.rect(screen, (255, 0, 0), sq, 1)
 
 
         for sq in obj_l:
@@ -440,8 +438,6 @@ while True:
                 if sq.colliderect(piece[2]):
                     playfield_closed.append((screen, piece[1], sq))
         piece_list.clear()
-        print(piece_list)
-        random_color = random.choice(colors)
 
         new_piece = False
 
@@ -453,6 +449,7 @@ while True:
             piece_list.append((screen, random_color, t_rect1))
             piece_list.append((screen, random_color, t_rect2))
             random_shape = random.choice(shape_list)
+            random_color = random.choice(colors)
             piece_x, piece_y = start_pos[0], start_pos[1]
             t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
 
@@ -468,6 +465,7 @@ while True:
             piece_list.append((screen, random_color, t_rect1))
             piece_list.append((screen, random_color, t_rect2))
             random_shape = random.choice(shape_list)
+            random_color = random.choice(colors)
             piece_x, piece_y = start_pos[0], start_pos[1]
             t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
 
@@ -482,6 +480,25 @@ while True:
     for sq in playfield_closed:
         pg.draw.rect(*sq)
         pg.draw.rect(screen, (0, 0, 0), sq[2], 1)
+
+    playfield_closed_sqs = []
+    for sq_c in playfield_closed:
+        playfield_closed_sqs.append(sq_c[2])
+
+    for line in line_dict.values():
+        check = line.collidelistall(playfield_closed_sqs)
+        if len(check) == 16:
+            print("POOF")
+            for sq_num in check:
+                for sq_c in playfield_closed:
+                    if playfield_closed_sqs[sq_num] == sq_c[2]:
+                        playfield_closed.remove(sq_c)
+
+            for sq_c in playfield_closed:
+                if sq_c[2][1] < line[1]:
+                    sq_c[2][1] += 20
+
+
 
     piece_x = t_rect1[0] + x_fix
     piece_x, piece_y = drop(piece_x, piece_y)
