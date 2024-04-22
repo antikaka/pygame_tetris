@@ -1,10 +1,6 @@
 
 To do:
 -Upcoming piece preview
--Full line go poof
 -Points
 -Pause, start, end
 -Difficulty increasing
-
-inserted pieces = bad
-
