@@ -20,17 +20,16 @@ def t_shape(count, x, y):
                 t_rect2[0] = 520
             x_fix = 0
 
-
         case 2:
             t_rect1[0], t_rect1[1], t_rect1[2], t_rect1[3] = t_rect1[0], t_rect1[1] - 40,  t_rect1[3], t_rect1[2]
             t_rect2[0], t_rect2[1], t_rect2[2], t_rect2[3] = t_rect2[0] + 20, t_rect2[1] - 20, t_rect2[3], t_rect2[2]
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
-                t_rect2[0] = 240
+                t_rect2[0] = 260
 
             if t_rect1[0] > 520:
                 t_rect1[0] = 520
-                t_rect2[0] = 520
+                t_rect2[0] = 540
             x_fix = 0
 
         case 3:
@@ -138,6 +137,7 @@ def l_shape(count, x, y):
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
                 t_rect2[0] = 280
+
             if t_rect1[0] > 500:
                 t_rect1[0] = 500
                 t_rect2[0] = 540
@@ -148,9 +148,10 @@ def l_shape(count, x, y):
             t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] + 40
             if t_rect1[0] < 240:
                 t_rect1[0] = 240
-                t_rect2[0] = 240
-            if t_rect2[0] > 520:
-                t_rect2[0] = 520
+                t_rect2[0] = 260
+
+            if t_rect2[0] > 540:
+                t_rect2[0] = 540
                 t_rect1[0] = 520
             x_fix = 0
 
@@ -279,10 +280,11 @@ def drop(x, y):
 
 
 
+
 pg.init()
 
 width, height = 800, 600
-screen = pg.display.set_mode((width, height))
+screen = pg.display.set_mode((width, height), pg.DOUBLEBUF)
 clock = pg.time.Clock()
 def_font = pg.font.get_default_font()
 font = pg.font.Font(def_font, 10)
@@ -323,6 +325,7 @@ random_shape = random.choice(shape_list)
 go_left = True
 go_right = True
 new_piece = False
+poof = False
 
 speed = 3
 pg.key.set_repeat(500, 50)
@@ -338,6 +341,11 @@ for num in range(26):
     line_y += 20
 
 playfield_closed = []
+playfield_active = []
+playfield_closed_sqs = []
+
+pg.event.set_allowed([pg.QUIT, pg.KEYDOWN, pg.KEYUP])
+
 while True:
     clock.tick(speed)
 
@@ -365,13 +373,36 @@ while True:
     start_button = pg.Rect(0, 10, 20, 20)
     pg.draw.rect(screen, (255, 0, 0), start_button)
 
+    if poof:
+        playfield_active = []
 
-    playfield_active = []
+    playfield_closed_sqs = []
     for sq_c in playfield_closed:
-        for sq in playfield_list:
-            if sq not in playfield_closed and sq_c[2][0] == sq[0] and sq_c[2][1] - 20 == sq[1]:
-                playfield_active.append(sq)
+        playfield_closed_sqs.append(sq_c[2])
 
+    poof = False
+    for line in line_dict.values():
+        check = line.collidelistall(playfield_closed_sqs)
+        if len(check) == 16:
+            print(check)
+            for sq_num in check:
+                print(sq_num, playfield_closed_sqs[sq_num])
+            poof = True
+            print("POOF")
+            for sq_num in check:
+                for sq_c in playfield_closed:
+                    if playfield_closed_sqs[sq_num] == sq_c[2]:
+                        playfield_closed.remove(sq_c)
+
+            for sq_c in playfield_closed:
+                if sq_c[2][1] < line[1]:
+                    sq_c[2][1] += 20
+
+
+    for sq_c in playfield_closed_sqs:
+        for sq in playfield_list:
+            if sq not in playfield_closed_sqs and sq not in playfield_active and sq_c[0] == sq[0] and sq_c[1]  - 20 == sq[1]:
+                playfield_active.append(sq)
 
     playfield_active_bottoms = []
     for sq in playfield_active:
@@ -436,9 +467,12 @@ while True:
         for sq in playfield_list:
             for piece in piece_list:
                 if sq.colliderect(piece[2]):
-                    playfield_closed.append((screen, piece[1], sq))
+                    if (screen, piece[1], sq) in playfield_closed:
+                        pass
+                    else:
+                        playfield_closed.append((screen, piece[1], sq))
         piece_list.clear()
-
+        print("playfield closed", len(playfield_closed))
         new_piece = False
 
     if piece_y > 40:
@@ -451,23 +485,23 @@ while True:
             random_shape = random.choice(shape_list)
             random_color = random.choice(colors)
             piece_x, piece_y = start_pos[0], start_pos[1]
-            t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
 
 
 
 
 
-    for bottom_act in playfield_active_bottoms:
-        if bottom_act.colliderect(t_rect1) or bottom_act.colliderect(t_rect2):
-            print("collide2")
-            piece_count += 1
-            new_piece = True
-            piece_list.append((screen, random_color, t_rect1))
-            piece_list.append((screen, random_color, t_rect2))
-            random_shape = random.choice(shape_list)
-            random_color = random.choice(colors)
-            piece_x, piece_y = start_pos[0], start_pos[1]
-            t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
+    if not new_piece:
+        for bottom_act in playfield_active_bottoms:
+            if bottom_act.colliderect(t_rect1) or bottom_act.colliderect(t_rect2):
+                print("collide2")
+                piece_count += 1
+                new_piece = True
+                piece_list.append((screen, random_color, t_rect1))
+                piece_list.append((screen, random_color, t_rect2))
+                random_shape = random.choice(shape_list)
+                random_color = random.choice(colors)
+                piece_x, piece_y = start_pos[0], start_pos[1]
+                break
 
     t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
 
@@ -481,24 +515,8 @@ while True:
         pg.draw.rect(*sq)
         pg.draw.rect(screen, (0, 0, 0), sq[2], 1)
 
-    playfield_closed_sqs = []
-    for sq_c in playfield_closed:
-        playfield_closed_sqs.append(sq_c[2])
-
-    for line in line_dict.values():
-        check = line.collidelistall(playfield_closed_sqs)
-        if len(check) == 16:
-            print("POOF")
-            for sq_num in check:
-                for sq_c in playfield_closed:
-                    if playfield_closed_sqs[sq_num] == sq_c[2]:
-                        playfield_closed.remove(sq_c)
-
-            for sq_c in playfield_closed:
-                if sq_c[2][1] < line[1]:
-                    sq_c[2][1] += 20
-
-
+    for sq in playfield_active:
+        pg.draw.rect(screen, (255, 0, 0), sq, 1)
 
     piece_x = t_rect1[0] + x_fix
     piece_x, piece_y = drop(piece_x, piece_y)
