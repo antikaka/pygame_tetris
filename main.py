@@ -275,9 +275,11 @@ def left_right(t_rect1, t_rect2):
 
 
 def drop(x, y):
-    y += 20
+    if paused or not started:
+        pass
+    else:
+        y += 20
     return x, y
-
 
 
 
@@ -287,7 +289,7 @@ width, height = 800, 600
 screen = pg.display.set_mode((width, height), pg.DOUBLEBUF)
 clock = pg.time.Clock()
 def_font = pg.font.get_default_font()
-font = pg.font.Font(def_font, 10)
+font = pg.font.Font(def_font, 30)
 
 red = (255, 0, 0)
 blue = (0, 0, 255)
@@ -301,6 +303,7 @@ colors = [red, blue, green, yellow, magenta, cyan]
 random_color = random.choice(colors)
 
 
+paused = False
 started = False
 
 start_pos = (380, 20)
@@ -343,8 +346,12 @@ for num in range(26):
 playfield_closed = []
 playfield_active = []
 playfield_closed_sqs = []
+next_piece = []
 
-pg.event.set_allowed([pg.QUIT, pg.KEYDOWN, pg.KEYUP])
+start_text = font.render("START", 1, (255, 255, 255))
+pause_text = font.render("PAUSE", 1, (255, 255, 255))
+
+pg.event.set_allowed([pg.QUIT, pg.KEYDOWN, pg.KEYUP, pg.MOUSEBUTTONUP])
 
 while True:
     clock.tick(speed)
@@ -370,8 +377,17 @@ while True:
     pg.draw.rect(screen, (0, 0, 0), line2)
     pg.draw.rect(screen, (0, 0, 0), line3)
 
-    start_button = pg.Rect(0, 10, 20, 20)
-    pg.draw.rect(screen, (255, 0, 0), start_button)
+    start_button = pg.Rect(30, 10, 100, 30)
+    if not started:
+        pg.draw.rect(screen, (255, 0, 0), start_button)
+        screen.blit(start_text, start_button)
+    if started:
+        pg.draw.rect(screen, (0, 255, 0), start_button)
+        screen.blit(pause_text, start_button)
+        if paused:
+            pg.draw.rect(screen, (255, 255, 0), start_button)
+            screen.blit(pause_text, start_button)
+
 
     if poof:
         playfield_active = []
@@ -384,11 +400,10 @@ while True:
     for line in line_dict.values():
         check = line.collidelistall(playfield_closed_sqs)
         if len(check) == 16:
-            print(check)
             for sq_num in check:
                 print(sq_num, playfield_closed_sqs[sq_num])
             poof = True
-            print("POOF")
+            # print("POOF")
             for sq_num in check:
                 for sq_c in playfield_closed:
                     if playfield_closed_sqs[sq_num] == sq_c[2]:
@@ -438,7 +453,7 @@ while True:
             pg.quit()
             sys.exit()
 
-        if event.type == pg.KEYDOWN:
+        if not paused and event.type == pg.KEYDOWN:
             if event.key == pg.K_LEFT and go_left:
                 piece_x -= 20
                 go_left = False
@@ -447,13 +462,21 @@ while True:
                 go_right = False
             if event.key == pg.K_DOWN:
                 speed = 30
-        if event.type == pg.KEYUP:
+        if not paused and event.type == pg.KEYUP:
             if event.key == pg.K_SPACE:
-                print("SPACE")
+                # print("SPACE")
                 count += 1
             if event.key == pg.K_DOWN:
                 while speed > 3:
                     speed -= 1
+        if event.type == pg.MOUSEBUTTONUP:
+            mouse_pos = pg.mouse.get_pos()
+            if started is False and start_button.collidepoint(mouse_pos):
+                started = True
+            elif started:
+                paused = not paused
+
+
 
 
 
@@ -472,16 +495,17 @@ while True:
                     else:
                         playfield_closed.append((screen, piece[1], sq))
         piece_list.clear()
-        print("playfield closed", len(playfield_closed))
         new_piece = False
+
+
 
     if piece_y > 40:
         if (bottom.colliderect(t_rect1) or bottom.colliderect(t_rect2)):
-            print("collide")
+            # print("collide")
             piece_count += 1
-            new_piece = True
             piece_list.append((screen, random_color, t_rect1))
             piece_list.append((screen, random_color, t_rect2))
+            new_piece = True
             random_shape = random.choice(shape_list)
             random_color = random.choice(colors)
             piece_x, piece_y = start_pos[0], start_pos[1]
@@ -493,7 +517,7 @@ while True:
     if not new_piece:
         for bottom_act in playfield_active_bottoms:
             if bottom_act.colliderect(t_rect1) or bottom_act.colliderect(t_rect2):
-                print("collide2")
+                # print("collide2")
                 piece_count += 1
                 new_piece = True
                 piece_list.append((screen, random_color, t_rect1))
@@ -503,24 +527,37 @@ while True:
                 piece_x, piece_y = start_pos[0], start_pos[1]
                 break
 
+    while len(next_piece) < 2:
+        random_shape = random.choice(shape_list)
+        random_color = random.choice(colors)
+        next_piece.append((random_shape, random_color))
+
+    if new_piece:
+        next_piece.append((random_shape, random_color))
+        if len(next_piece) > 2:
+            next_piece.pop(0)
+
+    random_shape, random_color = next_piece[0][0], next_piece[0][1]
+
+
     t_rect1, t_rect2, x_fix = random_shape(count, piece_x, piece_y)
 
-
-
-    pg.draw.rect(screen, random_color, t_rect1)
-    if t_rect2[2] > 1:
-        pg.draw.rect(screen, random_color, t_rect2)
+    if started:
+        pg.draw.rect(screen, random_color, t_rect1)
+        if t_rect2[2] > 1:
+            pg.draw.rect(screen, random_color, t_rect2)
 
     for sq in playfield_closed:
         pg.draw.rect(*sq)
         pg.draw.rect(screen, (0, 0, 0), sq[2], 1)
 
-    for sq in playfield_active:
-        pg.draw.rect(screen, (255, 0, 0), sq, 1)
+    next_preview_1, next_preview_2, next_x_fix = next_piece[1][0](1, 500, 100)
+    next_preview_1[0], next_preview_2[0] = next_preview_1[0] + 150, next_preview_2[0] + 150
+    pg.draw.rect(screen, next_piece[1][1], next_preview_1)
+    pg.draw.rect(screen, next_piece[1][1], next_preview_2)
 
     piece_x = t_rect1[0] + x_fix
     piece_x, piece_y = drop(piece_x, piece_y)
-
 
     pg.display.flip()
 

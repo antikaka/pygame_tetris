@@ -1,7 +1,5 @@
 
 To do:
--Upcoming piece preview
 -Points
--Pause, start, end
 -Difficulty increasing
 
