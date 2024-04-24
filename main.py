@@ -290,6 +290,7 @@ screen = pg.display.set_mode((width, height), pg.DOUBLEBUF)
 clock = pg.time.Clock()
 def_font = pg.font.get_default_font()
 font = pg.font.Font(def_font, 30)
+font2 = pg.font.Font(def_font, 100)
 
 red = (255, 0, 0)
 blue = (0, 0, 255)
@@ -321,6 +322,7 @@ line2 = pg.Rect(559, 0, 2, 580)
 right = pg.Rect(560, 0, 240, 580)
 line3 = pg.Rect(240, 580, 320, 2)
 bottom = pg.Rect(240, 579, 320, 40)
+end_line = pg.Rect(240, 60, 320, 2)
 
 shape_list = [sq_shape, t_shape, z_shape, i_shape, l_shape]
 random_shape = random.choice(shape_list)
@@ -336,6 +338,7 @@ pg.key.set_repeat(500, 50)
 line_dict = {}
 line_y = 60
 line_count = 0
+point_tracker = 0
 
 for num in range(26):
     line_count += 1
@@ -350,6 +353,7 @@ next_piece = []
 
 start_text = font.render("START", 1, (255, 255, 255))
 pause_text = font.render("PAUSE", 1, (255, 255, 255))
+end_text = font2.render("YOU LOST", 1, (0, 0, 0))
 
 pg.event.set_allowed([pg.QUIT, pg.KEYDOWN, pg.KEYUP, pg.MOUSEBUTTONUP])
 
@@ -371,7 +375,7 @@ while True:
             r_x += 20
         r_y += 20
 
-    pg.draw.rect(screen, (255, 0, 0), (240, 60, 320, 2))  #end line
+    pg.draw.rect(screen, (255, 0, 0), end_line)  #end line
 
     pg.draw.rect(screen, (0, 0, 0), line1)
     pg.draw.rect(screen, (0, 0, 0), line2)
@@ -388,6 +392,8 @@ while True:
             pg.draw.rect(screen, (255, 255, 0), start_button)
             screen.blit(pause_text, start_button)
 
+    text_points = font.render(str(point_tracker), 1, (0, 0, 0))
+    screen.blit(text_points, (650, 300))
 
     if poof:
         playfield_active = []
@@ -395,6 +401,8 @@ while True:
     playfield_closed_sqs = []
     for sq_c in playfield_closed:
         playfield_closed_sqs.append(sq_c[2])
+
+    poof_tracker = len(playfield_closed)
 
     poof = False
     for line in line_dict.values():
@@ -408,10 +416,15 @@ while True:
                 for sq_c in playfield_closed:
                     if playfield_closed_sqs[sq_num] == sq_c[2]:
                         playfield_closed.remove(sq_c)
-
             for sq_c in playfield_closed:
                 if sq_c[2][1] < line[1]:
                     sq_c[2][1] += 20
+
+    if poof:
+        poof_count = poof_tracker - len(playfield_closed)
+        points = (poof_count * 50) * (poof_count // 16)
+        point_tracker += points
+
 
 
     for sq_c in playfield_closed_sqs:
@@ -547,9 +560,18 @@ while True:
         if t_rect2[2] > 1:
             pg.draw.rect(screen, random_color, t_rect2)
 
+    # for sq in playfield_active:
+    #     pg.draw.rect(screen, (255, 0, 0), sq, 1)
+
     for sq in playfield_closed:
         pg.draw.rect(*sq)
         pg.draw.rect(screen, (0, 0, 0), sq[2], 1)
+
+    end_check = end_line.collidelist(playfield_closed_sqs)
+
+    if end_check > 0:
+        screen.blit(end_text, (150, 150))
+        paused = True
 
     next_preview_1, next_preview_2, next_x_fix = next_piece[1][0](1, 500, 100)
     next_preview_1[0], next_preview_2[0] = next_preview_1[0] + 150, next_preview_2[0] + 150
