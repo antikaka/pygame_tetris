@@ -4,11 +4,11 @@ import sys
 import random
 
 
-def t_shape(count, x, y):
+def t_shape(count, x, y):                     #t-shape piece creation and adjustments
     t_rect1 = pg.Rect(x, y, 60, 20)
     t_rect2 = pg.Rect(x, y, 20, 20)
 
-    match count:
+    match count:                             #different cases for different rotations
         case 1:
             t_rect2[0], t_rect2[1] = t_rect1[0] + 20, t_rect1[1] - 20
             if t_rect1[0] < 240:
@@ -64,7 +64,7 @@ def t_shape(count, x, y):
 
     return t_rect1, t_rect2, x_fix
 
-def z_shape(count, x, y):
+def z_shape(count, x, y):                       #z-shape piece creation and adjustments
     t_rect1 = pg.Rect(x + 20, y - 20, 20, 40)
     t_rect2 = pg.Rect(x + 20, y - 20, 20, 40)
     match count:
@@ -117,7 +117,7 @@ def z_shape(count, x, y):
             x_fix = -20
     return t_rect1, t_rect2, x_fix
 
-def l_shape(count, x, y):
+def l_shape(count, x, y):                       #l-shape piece creation and adjustments
     t_rect1 = pg.Rect(x + 20, y - 40, 20, 60)
     t_rect2 = pg.Rect(x + 20, y - 40, 20, 20)
     match count:
@@ -171,7 +171,7 @@ def l_shape(count, x, y):
             x_fix = 0
     return t_rect1, t_rect2, x_fix
 
-def sq_shape(count, x, y):
+def sq_shape(count, x, y):                      #square shape piece creation and adjustments
     t_rect1 = pg.Rect(x, y - 20, 40, 40)
     match count:
         case 1:
@@ -208,7 +208,7 @@ def sq_shape(count, x, y):
     return t_rect1, t_rect2, x_fix
 
 
-def i_shape(count, x, y):
+def i_shape(count, x, y):                       #i-shape piece creation and adjustments
     t_rect1 = pg.Rect(x + 20, y - 40, 20, 80)
     match count:
         case 1:
@@ -247,7 +247,7 @@ def i_shape(count, x, y):
     return t_rect1, t_rect2, x_fix
 
 
-def left_right(t_rect1, t_rect2):
+def left_right(t_rect1, t_rect2):           #checking for current piece if its possible to move left or right
     obj_l = []
     obj_r = []
     solo_rect = False
@@ -274,7 +274,7 @@ def left_right(t_rect1, t_rect2):
     return obj_l, obj_r
 
 
-def drop(x, y):
+def drop(x, y):                              #current piece dropping control, works only if game started and not paused
     if paused or not started:
         pass
     else:
@@ -300,21 +300,27 @@ magenta = (255, 0, 255)
 cyan = (0, 255, 255)
 
 colors = [red, blue, green, yellow, magenta, cyan]
-
 random_color = random.choice(colors)
 
-
-paused = False
-started = False
-
 start_pos = (380, 20)
+piece_x, piece_y = start_pos[0], start_pos[1]
+
+shape_list = [sq_shape, t_shape, z_shape, i_shape, l_shape]
+random_shape = random.choice(shape_list)
 
 piece_list = []
-
-piece_x, piece_y = start_pos[0], start_pos[1]
+line_dict = {}
+playfield_closed = []
+playfield_active = []
+playfield_closed_sqs = []
+next_piece = []
 
 count = 1
 piece_count = 0
+line_y = 60
+line_count = 0
+point_tracker = 0
+speed = 3
 
 line1 = pg.Rect(240, 0, 2, 580)
 left = pg.Rect(0, 0, 240, 580)
@@ -324,32 +330,20 @@ line3 = pg.Rect(240, 580, 320, 2)
 bottom = pg.Rect(240, 579, 320, 40)
 end_line = pg.Rect(240, 60, 320, 2)
 
-shape_list = [sq_shape, t_shape, z_shape, i_shape, l_shape]
-random_shape = random.choice(shape_list)
-
+paused = False
+started = False
 go_left = True
 go_right = True
 new_piece = False
 poof = False
 
-speed = 3
 pg.key.set_repeat(500, 50)
-
-line_dict = {}
-line_y = 60
-line_count = 0
-point_tracker = 0
 
 for num in range(26):
     line_count += 1
     line = pg.Rect(240, line_y, 320, 20)
     line_dict[line_count] = line
     line_y += 20
-
-playfield_closed = []
-playfield_active = []
-playfield_closed_sqs = []
-next_piece = []
 
 start_text = font.render("START", 1, (255, 255, 255))
 pause_text = font.render("PAUSE", 1, (255, 255, 255))
@@ -367,7 +361,6 @@ while True:
 
     for num in range(29):
         r_x = r_x_orig
-
         for num in range(16):
             rect = pg.Rect(r_x, r_y, r_width, r_height)
             playfield_list.append(rect)
@@ -377,7 +370,7 @@ while True:
 
     pg.draw.rect(screen, (255, 0, 0), end_line)  #end line
 
-    pg.draw.rect(screen, (0, 0, 0), line1)
+    pg.draw.rect(screen, (0, 0, 0), line1)      #left, right and bottom borders
     pg.draw.rect(screen, (0, 0, 0), line2)
     pg.draw.rect(screen, (0, 0, 0), line3)
 
@@ -398,13 +391,13 @@ while True:
     if poof:
         playfield_active = []
 
-    playfield_closed_sqs = []
+    playfield_closed_sqs = []                 #playfield_closed_sqs is basically playfield_closed but for easier use
     for sq_c in playfield_closed:
         playfield_closed_sqs.append(sq_c[2])
 
     poof_tracker = len(playfield_closed)
 
-    poof = False
+    poof = False                                            #checking if line is full, then poofing
     for line in line_dict.values():
         check = line.collidelistall(playfield_closed_sqs)
         if len(check) == 16:
@@ -420,15 +413,15 @@ while True:
                 if sq_c[2][1] < line[1]:
                     sq_c[2][1] += 20
 
-    if poof:
+    if poof:                                                #poof points
         poof_count = poof_tracker - len(playfield_closed)
         points = (poof_count * 50) * (poof_count // 16)
         point_tracker += points
 
 
 
-    for sq_c in playfield_closed_sqs:
-        for sq in playfield_list:
+    for sq_c in playfield_closed_sqs:                  #creating playfield_active for
+        for sq in playfield_list:                      #determining where to stick pieces
             if sq not in playfield_closed_sqs and sq not in playfield_active and sq_c[0] == sq[0] and sq_c[1]  - 20 == sq[1]:
                 playfield_active.append(sq)
 
@@ -439,7 +432,7 @@ while True:
 
     go_right = True
     go_left = True
-    if len(playfield_closed) > 1:
+    if len(playfield_closed) > 1:                      #check for left or right movement for current piece
         obj_l, obj_r = left_right(t_rect1, t_rect2)
 
         # for sq in obj_l:
@@ -499,7 +492,7 @@ while True:
         count = 4
 
 
-    if new_piece:
+    if new_piece:                               #playfield closed creation, which squares are taken
         for sq in playfield_list:
             for piece in piece_list:
                 if sq.colliderect(piece[2]):
@@ -512,7 +505,7 @@ while True:
 
 
 
-    if piece_y > 40:
+    if piece_y > 40:                                                     #collision to bottom of playfield
         if (bottom.colliderect(t_rect1) or bottom.colliderect(t_rect2)):
             # print("collide")
             piece_count += 1
@@ -527,7 +520,7 @@ while True:
 
 
 
-    if not new_piece:
+    if not new_piece:                                         #collision to other pieces tops
         for bottom_act in playfield_active_bottoms:
             if bottom_act.colliderect(t_rect1) or bottom_act.colliderect(t_rect2):
                 # print("collide2")
@@ -545,7 +538,7 @@ while True:
         random_color = random.choice(colors)
         next_piece.append((random_shape, random_color))
 
-    if new_piece:
+    if new_piece:                                          #next piece preview
         next_piece.append((random_shape, random_color))
         if len(next_piece) > 2:
             next_piece.pop(0)
@@ -563,11 +556,11 @@ while True:
     # for sq in playfield_active:
     #     pg.draw.rect(screen, (255, 0, 0), sq, 1)
 
-    for sq in playfield_closed:
+    for sq in playfield_closed:            #black outline for squares that are occupied
         pg.draw.rect(*sq)
         pg.draw.rect(screen, (0, 0, 0), sq[2], 1)
 
-    end_check = end_line.collidelist(playfield_closed_sqs)
+    end_check = end_line.collidelist(playfield_closed_sqs)    #end game state check
 
     if end_check > 0:
         screen.blit(end_text, (150, 150))

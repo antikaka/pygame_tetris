@@ -1,5 +1,4 @@
 
 To do:
--Points
 -Difficulty increasing
 
